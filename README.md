@@ -10,14 +10,14 @@ Signed URL middleware for [Axum](axum), using extractors.
 
 ## Usage
 
-```rust,no_run,ignore
+```rust
 use axum::{routing::get, Router};
 use axum_signed_urls::{SignedUrl, build};
 
 // This route will only be accessible if the URL is signed
 async fn handler(_: SignedUrl) -> String {
     // This is how you create a signed URL
-    build("/path", vec![("foo", "bar")].into_iter().collect()).unwrap();
+    build("/path", vec![("foo", "bar")].into_iter().collect()).unwrap()
 }
 ```
 

@@ -2,14 +2,14 @@
 //!
 //! ## Usage
 //!
-//! ```rust,no_run,ignore
+//! ```rust
 //! use axum::{routing::get, Router};
 //! use axum_signed_urls::{SignedUrl, build};
 //!
 //! // This route will only be accessible if the URL is signed
 //! async fn handler(_: SignedUrl) -> String {
 //!     // This is how you create a signed URL
-//!     build("/path", vec![("foo", "bar")].into_iter().collect()).unwrap();
+//!     build("/path", vec![("foo", "bar")].into_iter().collect()).unwrap()
 //! }
 //! ```
 //!
@@ -23,15 +23,9 @@
 //! [axum]: https://docs.rs/axum/latest/axum/
 //! [extractors-order]: https://docs.rs/axum/latest/axum/extract/index.html#the-order-of-extractors
 
-#![warn(
-    clippy::all,
-    clippy::pedantic,
-    missing_docs,
-    nonstandard_style,
-    future_incompatible
-)]
+#![warn(clippy::all, missing_docs, nonstandard_style, future_incompatible)]
 
-use std::{collections::HashMap, hash::BuildHasher};
+use std::collections::HashMap;
 
 use anyhow::{Context, Result};
 use axum::{
@@ -80,21 +74,25 @@ impl<S> FromRequestParts<S> for SignedUrl {
 ///
 /// # Example
 ///
-/// ```rust,no_run,ignore
+/// ```rust
 /// use axum_signed_urls::build;
+/// use std::collections::HashMap;
+///
+/// // Make sure to set AXUM_SECRET to a secret value, e.g. in your .env file
+/// # std::env::set_var("AXUM_SECRET", "hunter2");
 ///
 /// let mut query = HashMap::new();
 /// query.insert("foo", "bar");
 /// query.insert("baz", "qux");
 ///
 /// let url = build("/path", query).unwrap();
-/// assert_eq!(url, "/path?baz=qux&foo=bar&signature=...");
+/// assert_eq!(url, "/path?baz=qux&foo=bar&signature=25a3d00acee5bf7c1e71f0ce8addab046710221dbc12d0d1ce0a931a6c5f5add");
 /// ```
 ///
 /// # Errors
 ///
 /// Returns `Err` if there is an error while signing the URL.
-pub fn build<S: BuildHasher>(path: &str, query: HashMap<&str, &str, S>) -> Result<String> {
+pub fn build(path: &str, query: HashMap<&str, &str>) -> Result<String> {
     let mut query: Vec<(&str, &str)> = query.into_iter().collect();
     query.sort_by(|(k1, _), (k2, _)| k1.cmp(k2));
 
