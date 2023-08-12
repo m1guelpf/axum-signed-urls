@@ -63,7 +63,7 @@ impl<S> FromRequestParts<S> for SignedUrl {
         let unsigned_url = format!("{}{}", url.path(), stringify_query(&query));
 
         if signature != hmac_sha256(&unsigned_url).unwrap() {
-            return Err((StatusCode::UNAUTHORIZED, "Missing signature"));
+            return Err((StatusCode::UNAUTHORIZED, "Invalid signature"));
         }
 
         Ok(SignedUrl)
